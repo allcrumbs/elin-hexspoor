@@ -378,3 +378,48 @@ body{background:var(--bg);color:var(--text)}
 .tl__shot-lbl{position:relative;z-index:1;font-family:var(--font-head);font-weight:600;font-size:.98rem;color:var(--text)}
 .tl__shot-note{position:relative;z-index:1;font-family:var(--font-head);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
 @media (max-width:920px){ .tl__gallery{display:none} }
+
+/* ===== batch: green accents, clickable cards, seamless hero edge ===== */
+/* 8) kill the faint line at the hero/journey boundary */
+.hero__bg-veil{background:radial-gradient(90% 80% at 74% 24%,color-mix(in srgb,var(--accent) 13%,transparent),transparent 60%),var(--bg)}
+.hero{border:0}
+/* 9) timeline role cards: original style, clickable */
+.rolecard{cursor:pointer}
+.tl__ms:hover .mtag{border-color:var(--accent2);color:var(--accent2-bright)}
+.tl__role .rolecard__title{color:var(--text)}
+
+/* ===== greenie: request links, awards line, team photos, modal ===== */
+.reqlink,.reco__req{background:none;border:0;font:inherit;font-family:var(--font-head);color:var(--accent2);cursor:pointer;padding:0;border-bottom:1px solid var(--accent2-line);transition:color .2s,border-color .2s}
+.reqlink:hover,.reco__req:hover{color:var(--accent2-bright);border-color:var(--accent2)}
+.reco__req{display:inline-block;margin-top:.5rem}
+.formername{color:var(--text-mute);font-size:.85rem;margin:.2rem 0 1rem}
+.award-line{color:var(--text-soft);line-height:2}
+.award-line a{color:var(--accent);border-bottom:1px solid var(--accent-line)}
+.award-line a:hover{color:var(--accent-bright)}
+.member__ph img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.member__ini{font-family:var(--font-head);font-weight:600;color:var(--accent2);font-size:1.05rem}
+.modal{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;padding:1.2rem}
+.modal[hidden]{display:none}
+.modal__backdrop{position:absolute;inset:0;background:rgba(10,8,6,.72)}
+.modal__card{position:relative;background:var(--surface);border:1px solid var(--line-strong);border-radius:16px;padding:1.8rem;max-width:420px;width:100%;box-shadow:0 30px 70px -30px rgba(0,0,0,.9)}
+.modal__x{position:absolute;top:.6rem;right:.9rem;background:none;border:0;color:var(--text-mute);font-size:1.6rem;cursor:pointer;line-height:1}
+.modal__card h3{font-size:1.2rem;margin-bottom:.4rem}
+.modal__sub{color:var(--text-soft);font-size:.9rem;margin-bottom:1.1rem}
+.modal__card label{display:block;font-family:var(--font-head);font-size:.8rem;color:var(--text-soft);margin-bottom:.8rem}
+.modal__card input{display:block;width:100%;margin-top:.3rem;padding:.6rem .8rem;background:var(--bg);border:1px solid var(--line-strong);border-radius:9px;color:var(--text);font:inherit}
+.modal__card input:focus{outline:none;border-color:var(--accent-line)}
+.modal__err{color:#e2915f;font-size:.85rem;margin-bottom:.7rem}
+.modal__ok{color:var(--accent2-bright);margin-top:1rem}
+.modal__card .btn--primary{width:100%;justify-content:center;margin-top:.3rem}
+
+/* photo galleries on experience pages */
+.photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:.8rem;margin-top:.4rem}
+.photo-grid img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:12px;border:1px solid var(--line-strong);box-shadow:0 14px 30px -22px rgba(0,0,0,.9)}
+.tl__shot[style*="url"] .tl__shot-lbl{position:absolute;left:1rem;bottom:.9rem;text-align:left}
+
+/* minor role (milestone) hover: underline reveals left to right under role + org, then arrow */
+.tl__ms{position:relative;display:inline-block;padding-bottom:5px}
+.tl__ms .arr{opacity:0;transform:translateX(-5px);transition:opacity .2s ease .28s,transform .2s ease .28s}
+.tl__ms::after{content:"";position:absolute;left:0;bottom:0;height:1.5px;width:0;background:var(--accent2);transition:width .32s var(--ease)}
+.tl__ms:hover::after,.tl__ms:focus-visible::after{width:100%}
+.tl__ms:hover .arr,.tl__ms:focus-visible .arr{opacity:1;transform:none}
