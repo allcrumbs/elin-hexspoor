@@ -242,8 +242,8 @@
       // keep the lines to the right of the text block so they never cross any text
       var content = hero.querySelector('.hero__content');
       var cl = content ? content.getBoundingClientRect() : null;
-      keepLeft = cl ? (cl.right - r.left + 72) : W * 0.5;
-      enabled = (W - keepLeft) > 240;            // only animate if there is real empty room
+      keepLeft = cl ? (cl.right - r.left + 40) : W * 0.5;
+      enabled = (W - keepLeft) > 150;            // only animate if there is real empty room
       if (!enabled) ctx.clearRect(0, 0, W, H);
     }
     size();
@@ -251,54 +251,40 @@
 
     var rnd = function (a, b) { return a + Math.random() * (b - a); };
     var TRAIL = 210;
-    function makeTrail() {
-      var s = { pts: [] };
-      var x0 = keepLeft + 20, x1 = W - 20;
-      var edge = Math.floor(rnd(0, 3));
-      if (edge === 0) { s.x = W + 20; s.y = rnd(0, H); s.ang = Math.PI + rnd(-0.5, 0.5); }
-      else if (edge === 1) { s.x = rnd(x0, x1); s.y = -20; s.ang = Math.PI / 2 + rnd(-0.5, 0.5); }
-      else { s.x = rnd(x0, x1); s.y = H + 20; s.ang = -Math.PI / 2 + rnd(-0.5, 0.5); }
-      s.speed = rnd(1.1, 2.1);
-      s.curve = rnd(0.006, 0.02);                 // how tightly it curls
-      s.curvePhase = rnd(0, Math.PI * 2);
-      s.curveSpeed = rnd(0.01, 0.03) * (Math.random() < 0.5 ? -1 : 1);
-      s.hue = Math.random() < 0.6 ? 'copper' : 'green';
-      return s;
+    function makeTrail(i) {
+      return {
+        pts: [],
+        rFrac: [0.5, 0.72, 0.94][i],                 // nested orbit radii (fraction of the room)
+        rAmp: 0.05 + i * 0.015,                       // gentle radius breathing
+        rPhase: rnd(0, Math.PI * 2),
+        rSpeed: rnd(0.004, 0.008) * (Math.random() < 0.5 ? -1 : 1),
+        ang: rnd(0, Math.PI * 2),                     // starting position on the orbit
+        w: [0.0105, 0.0082, 0.0060][i],               // inner orbits turn a little faster
+        wPhase: rnd(0, Math.PI * 2),
+        wSpeed: rnd(0.003, 0.006),
+        hue: i === 1 ? 'green' : 'copper'
+      };
     }
-    // three concurrent trails, always on screen (right side only), always circling
-    var trails = [makeTrail(), makeTrail(), makeTrail()];
+    var trails = [makeTrail(0), makeTrail(1), makeTrail(2)];
+    var cDrift = rnd(0, Math.PI * 2);
 
-    function advance(s, idx) {
-      s.curvePhase += s.curveSpeed;
-      s.ang += Math.sin(s.curvePhase) * s.curve;
-      // steer back toward the centre of the allowed right-hand region near any edge
-      var cx = (keepLeft + W) / 2, cy = H / 2;
-      var leftProx = s.x - keepLeft;
-      var edgeProx = Math.min(leftProx, W - s.x, s.y, H - s.y);
-      if (edgeProx < 140) {
-        var toC = Math.atan2(cy - s.y, cx - s.x);
-        var diff = Math.atan2(Math.sin(toC - s.ang), Math.cos(toC - s.ang));
-        s.ang += diff * (leftProx < 60 ? 0.13 : 0.05);   // push harder away from the text edge
-      }
-      s.x += Math.cos(s.ang) * s.speed;
-      s.y += Math.sin(s.ang) * s.speed;
-      // hard stop: never let a head cross into the text column
-      if (s.x < keepLeft) { s.x = keepLeft; s.ang = Math.atan2(Math.sin(s.ang), Math.abs(Math.cos(s.ang))); }
+    // each trail orbits a shared, slowly drifting centre, so they keep circling one another
+    function advance(s, cx, cy, maxR) {
+      s.rPhase += s.rSpeed;
+      s.wPhase += s.wSpeed;
+      var r = maxR * Math.max(0.1, Math.min(1, s.rFrac + Math.sin(s.rPhase) * s.rAmp));
+      s.ang += s.w * (1 + Math.sin(s.wPhase) * 0.4);   // smoothly varying turn rate
+      s.x = cx + Math.cos(s.ang) * r;
+      s.y = cy + Math.sin(s.ang) * r;
       s.pts.push({ x: s.x, y: s.y });
       if (s.pts.length > TRAIL) s.pts.shift();
-      s.life = (s.life || 0) + 1;
-      if (s.life > 900 && Math.random() < 0.004) {
-        s.curveSpeed = (0.01 + Math.random() * 0.02) * (Math.random() < 0.5 ? -1 : 1);
-        s.hue = Math.random() < 0.6 ? 'copper' : 'green';
-        s.life = 0;
-      }
     }
     function draw(s) {
-      var col = s.hue === 'copper' ? '236,152,80' : '166,193,151';
+      var col = s.hue === 'copper' ? '45,106,79' : '110,143,106';
       ctx.lineCap = 'round'; ctx.lineJoin = 'round';
       for (var i = 1; i < s.pts.length; i++) {
-        var t = i / s.pts.length;                 // 0 tail -> 1 head
-        var a = Math.pow(t, 1.5) * 0.72;          // stronger presence, still soft
+        var t = i / s.pts.length;
+        var a = Math.pow(t, 1.5) * 0.95;
         ctx.strokeStyle = 'rgba(' + col + ',' + a.toFixed(3) + ')';
         ctx.lineWidth = 0.7 + t * 2.3;
         ctx.beginPath();
@@ -312,7 +298,14 @@
     function step() {
       if (!running) return;
       ctx.clearRect(0, 0, W, H);
-      if (enabled) { for (var i = 0; i < trails.length; i++) { advance(trails[i], i); draw(trails[i]); } }
+      if (enabled) {
+        var regW = W - keepLeft;
+        var maxR = Math.max(26, regW * 0.5 - 14);
+        cDrift += 0.006;
+        var cx = keepLeft + regW * 0.5 + Math.sin(cDrift) * regW * 0.06;
+        var cy = H * 0.44 + Math.cos(cDrift * 0.8) * H * 0.08;
+        for (var i = 0; i < trails.length; i++) { advance(trails[i], cx, cy, maxR); draw(trails[i]); }
+      }
       raf = requestAnimationFrame(step);
     }
     step();
@@ -372,4 +365,22 @@
     window.addEventListener('resize', upd, { passive: true });
   })();
 
+})();
+
+/* ---- smooth scrolling via Lenis (graceful: native scroll if it fails to load) ---- */
+(function () {
+  if (!window.matchMedia || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return; // desktop only; touch is already smooth
+  var sc = document.createElement('script');
+  sc.src = 'https://cdn.jsdelivr.net/npm/lenis@1/dist/lenis.min.js';
+  sc.async = true;
+  sc.onload = function () {
+    if (!window.Lenis) return;
+    try {
+      var lenis = new window.Lenis({ duration: 1.05, smoothWheel: true, wheelMultiplier: 1 });
+      function raf(t) { lenis.raf(t); requestAnimationFrame(raf); }
+      requestAnimationFrame(raf);
+    } catch (e) {}
+  };
+  document.head.appendChild(sc);
 })();

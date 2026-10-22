@@ -2,14 +2,14 @@
    Elin S. Hexspoor — Portfolio · dark + copper · multi-page
    =================================================================== */
 :root{
-  /* dark · warm espresso */
-  --bg:#1c1611; --bg-2:#241c15; --surface:#2d231b; --surface-2:#372a20;
-  --line:rgba(240,230,214,.10); --line-strong:rgba(240,230,214,.20);
-  --text:#f1e8dc; --text-soft:#cdbfae; --text-mute:#9a8d7b;
-  --accent:#d8823b; --accent-deep:#b8662a; --accent-bright:#ec9850;
-  --accent-soft:rgba(216,130,59,.15); --accent-line:rgba(216,130,59,.42);
-  --accent2:#8fae7f; --accent2-bright:#a6c197; --accent2-soft:rgba(143,174,127,.16); --accent2-line:rgba(143,174,127,.45);
-  --edu:#cba25c;
+  /* light · warm linen + forest green */
+  --bg:#f4eddf; --bg-2:#ebe2cf; --surface:#fffdf7; --surface-2:#f7f0e2;
+  --line:rgba(39,34,25,.12); --line-strong:rgba(39,34,25,.20);
+  --text:#272219; --text-soft:#504a3d; --text-mute:#857b6b;
+  --accent:#2d6a4f; --accent-deep:#235741; --accent-bright:#327457;
+  --accent-soft:rgba(45,106,79,.12); --accent-line:rgba(45,106,79,.34);
+  --accent2:#4e7d5f; --accent2-bright:#5a8a6b; --accent2-soft:rgba(78,125,95,.15); --accent2-line:rgba(78,125,95,.42);
+  --edu:#a8822f;
   --radius:18px; --radius-sm:12px; --maxw:1180px;
   --ease:cubic-bezier(.22,.61,.36,1);
   --font-head:'Space Grotesk',system-ui,sans-serif;
@@ -636,3 +636,72 @@ a.tl__shot.is-active{pointer-events:auto}
   .relpost__title{font-size:.94rem}
   .relpost__arrow{display:none}
 }
+
+/* =========================================================
+   LIGHT THEME CONVERSION — Warm Linen + Forest green
+   (overrides the dark-era hardcoded values)
+   ========================================================= */
+/* buttons: white ink on green; soft green shadows */
+.btn--primary{color:#fff;box-shadow:0 8px 22px -10px rgba(45,106,79,.45)}
+.btn--primary:hover{color:#fff;box-shadow:0 12px 28px -10px rgba(45,106,79,.55)}
+.btn--ghost{background:rgba(39,34,25,.015)}
+.clink:not(.clink--solid){background:var(--surface)}
+.clink--solid,.clink--solid:hover{background:var(--accent);color:#fff}
+.rolecard:hover .rolecard__more{color:#fff}
+.rolecard--feature{background:linear-gradient(180deg,var(--accent-soft),var(--surface))}
+
+/* soften heavy black shadows for a light ground */
+.ph{box-shadow:0 14px 28px -22px rgba(60,45,20,.40)}
+.rolecard:hover{box-shadow:0 18px 40px -26px rgba(60,45,20,.35)}
+.tl__stage{box-shadow:0 20px 44px -28px rgba(60,45,20,.35)}
+.photo-grid img{box-shadow:0 12px 26px -22px rgba(60,45,20,.40)}
+.cv-dd__menu{box-shadow:0 18px 40px -24px rgba(60,45,20,.40)}
+.toast{box-shadow:0 18px 40px -20px rgba(60,45,20,.40)}
+.modal__card{box-shadow:0 30px 70px -34px rgba(60,45,20,.45)}
+.after-skills{box-shadow:none}
+.appshot img{filter:drop-shadow(0 22px 44px rgba(60,45,20,.26))}
+
+/* subtle hover tints that used white (invisible on cream) */
+.recorow:hover,.relpost__link:hover{background:rgba(39,34,25,.03)}
+.chips li{background:rgba(39,34,25,.015)}
+.carousel__btn{background:rgba(39,34,25,.015)}
+
+/* hero: faint green glow on cream; dial the line animation back */
+.hero__bg-veil{background:radial-gradient(85% 78% at 76% 22%,color-mix(in srgb,var(--accent) 10%,transparent),transparent 60%),var(--bg)}
+.hero__anim{opacity:1}
+
+/* back-to-top: light pill with green progress ring */
+.totop{background:linear-gradient(180deg,#fffdf7,#f3ead9);color:var(--accent);border-color:var(--accent-line);box-shadow:0 12px 28px -12px rgba(60,45,20,.40),inset 0 1px 0 rgba(255,255,255,.65)}
+.totop:hover{border-color:var(--accent);box-shadow:0 16px 34px -12px rgba(45,106,79,.40),inset 0 1px 0 rgba(255,255,255,.75)}
+.totop:hover .totop__track{stroke:rgba(45,106,79,.28)}
+
+/* award first-place badge: deep gold readable on cream */
+.award__place{color:#8a6a1e;border-color:rgba(138,106,30,.42);background:rgba(138,106,30,.10)}
+/* modal polish on light */
+.modal__err{color:#b1432a}
+.modal__backdrop{background:rgba(39,34,25,.50)}
+
+/* ---- hero: wider intro paragraph, content higher on load ---- */
+.hero{min-height:90svh;padding:5.5rem 0 3rem}
+.hero .hero__content{max-width:880px}
+.hero__blurb{max-width:66ch}
+@media (max-width:860px){.hero{min-height:auto;padding:6.5rem 0 3rem}.hero__blurb{max-width:100%}}
+
+/* ---- flat light-green card fills (no gradient) ---- */
+:root{--card:#dedfd0}
+.rolecard,.rolecard--feature{background:var(--card)}
+.award{background:var(--card)}
+.cta-band{background:var(--card)}
+.cta-band::before{display:none}
+
+/* ---- Expertise: numbered editorial list (five strengths) ---- */
+.nlist{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
+.nrow{display:grid;grid-template-columns:auto 1fr;gap:1.4rem clamp(1.2rem,4vw,3rem);padding:1.7rem .2rem;border-bottom:1px solid var(--line);align-items:start;transition:background .25s var(--ease)}
+.nrow:hover{background:rgba(39,34,25,.02)}
+.nnum{font-family:var(--font-head);font-weight:700;font-size:clamp(1.6rem,3vw,2.5rem);color:var(--accent-line);line-height:1;letter-spacing:-.02em}
+.nrow__body h3{font-size:clamp(1.2rem,2.2vw,1.45rem);margin-bottom:.4rem}
+.nrow__body h3 .amp{font-weight:300}
+.nrow__p{color:var(--text-soft);font-size:1rem;line-height:1.6;max-width:70ch}
+.nrow__p b{color:var(--accent);font-family:var(--font-head);font-weight:600}
+.nrow__body .chips{margin-top:.85rem}
+@media (max-width:620px){.nrow{grid-template-columns:auto 1fr;gap:.2rem .9rem}.nnum{font-size:1.5rem}}
